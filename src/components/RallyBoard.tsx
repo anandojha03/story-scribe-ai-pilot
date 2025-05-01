@@ -161,6 +161,13 @@ export function RallyBoard() {
                           {story.id}
                         </span>
                       </div>
+                      {story.featureNumber && (
+                        <div className="mt-1">
+                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                            {story.featureNumber}
+                          </span>
+                        </div>
+                      )}
                       <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
                         {story.description}
                       </p>

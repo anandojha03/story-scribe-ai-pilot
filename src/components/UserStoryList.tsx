@@ -13,10 +13,12 @@ import { UserStory } from "@/types";
 import { useNavigate } from "react-router-dom";
 
 export function UserStoryList() {
-  const { userStories, isGenerating, refineStory, deleteStory } = useAppContext();
+  const { userStories, isGenerating, refineStory, deleteStory, moveToRally } = useAppContext();
   const [selectedStoryId, setSelectedStoryId] = useState<string | null>(null);
   const [refinementText, setRefinementText] = useState("");
   const [open, setOpen] = useState(false);
+  const [rallyDialogOpen, setRallyDialogOpen] = useState(false);
+  const [featureNumber, setFeatureNumber] = useState("");
   const [selectedStories, setSelectedStories] = useState<{[key: string]: boolean}>({});
   const navigate = useNavigate();
 
@@ -34,11 +36,18 @@ export function UserStoryList() {
     setOpen(true);
   };
 
+  const handleOpenRallyDialog = () => {
+    if (Object.values(selectedStories).some(value => value)) {
+      setRallyDialogOpen(true);
+    }
+  };
+
   const handleAddToRally = () => {
-    const storiesToAdd = userStories.filter(story => selectedStories[story.id]);
-    if (storiesToAdd.length > 0) {
-      // In a real app, would persist these stories to state
-      // For demo, we'll navigate to the rally board
+    if (featureNumber) {
+      const storiesToAdd = userStories.filter(story => selectedStories[story.id]);
+      moveToRally(storiesToAdd, featureNumber);
+      setRallyDialogOpen(false);
+      setFeatureNumber("");
       navigate("/rally");
     }
   };
@@ -68,7 +77,7 @@ export function UserStoryList() {
           </div>
           {userStories.length > 0 && (
             <Button 
-              onClick={handleAddToRally} 
+              onClick={handleOpenRallyDialog} 
               variant="secondary" 
               className="bg-rally hover:bg-rally-hover text-white"
               disabled={!isAnyStorySelected}
@@ -143,6 +152,7 @@ export function UserStoryList() {
         </CardContent>
       </Card>
 
+      {/* Refinement Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
@@ -178,6 +188,39 @@ export function UserStoryList() {
               ) : (
                 'Apply Refinement'
               )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Rally Feature Number Dialog */}
+      <Dialog open={rallyDialogOpen} onOpenChange={setRallyDialogOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Add to Rally Board</DialogTitle>
+            <DialogDescription>
+              Enter a feature number for the selected user stories
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="featureNumber" className="text-left">
+                Feature Number
+              </Label>
+              <Input
+                id="featureNumber"
+                placeholder="F123"
+                value={featureNumber}
+                onChange={(e) => setFeatureNumber(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRallyDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddToRally} disabled={!featureNumber}>
+              Add to Rally
             </Button>
           </DialogFooter>
         </DialogContent>

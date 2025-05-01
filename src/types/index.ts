@@ -8,6 +8,7 @@ export interface UserStory {
   planEstimate: number;
   notes: string;
   status: "backlog" | "defined" | "inProgress" | "completed";
+  featureNumber?: string;
 }
 
 export interface RallyColumn {

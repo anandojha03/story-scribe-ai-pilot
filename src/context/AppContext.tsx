@@ -15,7 +15,7 @@ interface AppContextType {
   processDocument: () => Promise<void>;
   refineStory: (id: string, refinement: string) => Promise<void>;
   deleteStory: (id: string) => void;
-  moveToRally: (stories: UserStory[]) => void;
+  moveToRally: (stories: UserStory[], featureNumber: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -127,10 +127,12 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  const moveToRally = (stories: UserStory[]) => {
+  const moveToRally = (stories: UserStory[], featureNumber: string) => {
+    // In a real implementation, this would call the backend API
+    // For now, we'll just show a toast
     toast({
       title: "Success",
-      description: `${stories.length} stories moved to Rally board!`,
+      description: `${stories.length} stories moved to Rally board under feature ${featureNumber}!`,
     });
   };
 
