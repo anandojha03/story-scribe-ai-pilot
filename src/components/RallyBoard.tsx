@@ -13,10 +13,17 @@ export function RallyBoard() {
     { id: "completed", title: "Completed", stories: [] }
   ]);
   const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [featureNumbers, setFeatureNumbers] = useState<string[]>([]);
 
   // Update columns whenever userStories changes
   useEffect(() => {
     const rallyStories = userStories.filter(story => story.featureNumber);
+    
+    // Get unique feature numbers
+    const uniqueFeatureNumbers = Array.from(
+      new Set(rallyStories.map(story => story.featureNumber).filter(Boolean) as string[])
+    );
+    setFeatureNumbers(uniqueFeatureNumbers);
     
     setColumns(prev => prev.map(column => ({
       ...column,
@@ -71,6 +78,19 @@ export function RallyBoard() {
           <CardDescription>
             Drag and drop user stories between columns to update their status
           </CardDescription>
+          {featureNumbers.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              <span className="text-sm font-medium">Feature Numbers:</span>
+              {featureNumbers.map(featureNum => (
+                <span 
+                  key={featureNum} 
+                  className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full"
+                >
+                  {featureNum}
+                </span>
+              ))}
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

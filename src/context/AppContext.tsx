@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState } from "react";
 import { AIModelType, SolutionDocument, UserStory } from "@/types";
 import { useToast } from "@/hooks/use-toast";
@@ -16,6 +15,7 @@ interface AppContextType {
   refineStory: (id: string, refinement: string) => Promise<void>;
   deleteStory: (id: string) => void;
   moveToRally: (stories: UserStory[], featureNumber: string) => void;
+  resetApp: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -145,6 +145,17 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
+  const resetApp = () => {
+    setDocumentContent(null);
+    setUserStories([]);
+    setSelectedModel("gemini");
+    
+    toast({
+      title: "Reset Complete",
+      description: "All data has been cleared and settings reset to default.",
+    });
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -160,6 +171,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         refineStory,
         deleteStory,
         moveToRally,
+        resetApp,
       }}
     >
       {children}
