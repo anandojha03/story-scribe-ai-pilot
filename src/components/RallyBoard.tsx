@@ -2,78 +2,27 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RallyColumn, UserStory } from "@/types";
-
-// Initial dummy data for the Rally board columns
-const initialColumns: RallyColumn[] = [
-  {
-    id: "backlog",
-    title: "Backlog",
-    stories: [
-      {
-        id: "RS1",
-        name: "Setup Project Structure",
-        description: "Set up the basic project structure with FastAPI backend and React frontend.",
-        planEstimate: 3,
-        notes: "Include Docker configuration.",
-        status: "backlog"
-      },
-      {
-        id: "RS2",
-        name: "Configure Authentication",
-        description: "Implement authentication system for the application.",
-        planEstimate: 5,
-        notes: "Use JWT tokens for authentication.",
-        status: "backlog"
-      }
-    ]
-  },
-  {
-    id: "defined",
-    title: "Defined",
-    stories: [
-      {
-        id: "RS3",
-        name: "Design User Interface",
-        description: "Create the initial design mockups for the application.",
-        planEstimate: 3,
-        notes: "Follow the design system.",
-        status: "defined"
-      }
-    ]
-  },
-  {
-    id: "inProgress",
-    title: "In Progress",
-    stories: [
-      {
-        id: "RS4",
-        name: "Document API Endpoints",
-        description: "Create documentation for all API endpoints.",
-        planEstimate: 2,
-        notes: "Use Swagger for documentation.",
-        status: "inProgress"
-      }
-    ]
-  },
-  {
-    id: "completed",
-    title: "Completed",
-    stories: [
-      {
-        id: "RS5",
-        name: "Setup CI/CD Pipeline",
-        description: "Configure CI/CD pipeline for automatic deployments.",
-        planEstimate: 3,
-        notes: "Use GitHub Actions.",
-        status: "completed"
-      }
-    ]
-  }
-];
+import { useAppContext } from "@/context/AppContext";
 
 export function RallyBoard() {
-  const [columns, setColumns] = useState<RallyColumn[]>(initialColumns);
+  const { userStories } = useAppContext();
+  const [columns, setColumns] = useState<RallyColumn[]>([
+    { id: "backlog", title: "Backlog", stories: [] },
+    { id: "defined", title: "Defined", stories: [] },
+    { id: "inProgress", title: "In Progress", stories: [] },
+    { id: "completed", title: "Completed", stories: [] }
+  ]);
   const [draggingId, setDraggingId] = useState<string | null>(null);
+
+  // Update columns whenever userStories changes
+  useEffect(() => {
+    const rallyStories = userStories.filter(story => story.featureNumber);
+    
+    setColumns(prev => prev.map(column => ({
+      ...column,
+      stories: rallyStories.filter(story => story.status === column.id)
+    })));
+  }, [userStories]);
 
   // Simple drag and drop functionality
   const handleDragStart = (e: React.DragEvent, storyId: string) => {
@@ -105,22 +54,13 @@ export function RallyBoard() {
     
     if (!sourceColumnId || !story || sourceColumnId === targetColumnId) return;
     
-    // Remove from source column and add to target column
-    setColumns(prev => prev.map(column => {
-      if (column.id === sourceColumnId) {
-        return {
-          ...column,
-          stories: column.stories.filter(s => s.id !== storyId)
-        };
-      }
-      if (column.id === targetColumnId) {
-        return {
-          ...column,
-          stories: [...column.stories, { ...story!, status: targetColumnId as any }]
-        };
-      }
-      return column;
-    }));
+    // Update the story status in the userStories array
+    const { userStories: allStories, setUserStories } = useAppContext();
+    setUserStories(
+      allStories.map(s => 
+        s.id === storyId ? { ...s, status: targetColumnId as any } : s
+      )
+    );
   };
 
   return (

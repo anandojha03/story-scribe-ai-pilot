@@ -128,8 +128,17 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const moveToRally = (stories: UserStory[], featureNumber: string) => {
-    // In a real implementation, this would call the backend API
-    // For now, we'll just show a toast
+    // Update each selected story with the feature number
+    const updatedStories = userStories.map(story => {
+      const isSelected = stories.some(selectedStory => selectedStory.id === story.id);
+      if (isSelected) {
+        return { ...story, featureNumber, status: "backlog" as const };
+      }
+      return story;
+    });
+    
+    setUserStories(updatedStories);
+    
     toast({
       title: "Success",
       description: `${stories.length} stories moved to Rally board under feature ${featureNumber}!`,

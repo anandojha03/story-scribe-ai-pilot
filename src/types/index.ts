@@ -1,5 +1,5 @@
 
-export type AIModelType = "gemini" | "chatgpt" | "copilot";
+export type AIModelType = "gemini" | "chatgpt";
 
 export interface UserStory {
   id: string;
