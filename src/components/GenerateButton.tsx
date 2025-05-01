@@ -22,7 +22,7 @@ export function GenerateButton() {
       ) : (
         <>
           <Sparkles className="mr-2 h-4 w-4" />
-          Generate User Stories with {selectedModel === "chatgpt" ? "ChatGPT" : selectedModel === "copilot" ? "Co-pilot" : "Gemini"}
+          Generate User Stories with {selectedModel === "chatgpt" ? "ChatGPT" : "Gemini"}
         </>
       )}
     </Button>

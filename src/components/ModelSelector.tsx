@@ -22,11 +22,6 @@ const models: ModelOption[] = [
     name: "ChatGPT",
     description: "OpenAI's powerful language model.",
   },
-  {
-    id: "copilot",
-    name: "Co-pilot",
-    description: "GitHub's AI coding assistant.",
-  },
 ];
 
 export function ModelSelector() {
