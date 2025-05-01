@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAppContext } from "@/context/AppContext";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
-import { Loader2, Reset } from "lucide-react";
+import { Loader2, RefreshCw } from "lucide-react";
 
 export function ResetButton() {
   const { resetApp } = useAppContext();
@@ -26,7 +26,7 @@ export function ResetButton() {
         onClick={() => setIsDialogOpen(true)}
         className="animate-fade-in"
       >
-        <Reset className="mr-2 h-4 w-4" />
+        <RefreshCw className="mr-2 h-4 w-4" />
         Reset Application
       </Button>
 
